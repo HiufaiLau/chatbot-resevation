@@ -8,7 +8,6 @@ class ReservationService {
   constructor({ datafile, reservationDuration, numberOfTables }) {
     this.datafile = datafile;
     this.numberOfTables = numberOfTables;
-    console.log('tables' + this.numberOfTables);
     this.reservationDuration = 60 * 60 * reservationDuration;
   }
 
@@ -24,11 +23,6 @@ class ReservationService {
     });
 
     return this.numberOfTables - booked.length >= 0;
-
-    console.log('booked' + booked);
-    console.log('available tables' + this.numberOfTables);
-    console.log('x1' + x1);
-    console.log('x2' + x1);
   }
 
   async getList() {

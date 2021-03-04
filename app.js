@@ -4,8 +4,8 @@ const path = require('path');
 const logger = require('morgan');
 
 const ReservationServce = require('./services/ReservationService');
-const SessionServce = require('./services/SessionService');
 const WitService = require('./services/WitService');
+const SessionService = require('./services/SessionService');
 
 const indexRouter = require('./routes/index');
 const slackRouter = require('./routes/bots/slack');
@@ -15,7 +15,8 @@ module.exports = (config) => {
 
   const reservationService = new ReservationServce(config.reservations);
   const witService = new WitService(config.wit.token);
-  const sessionService = new SessionServce();
+  const sessionService = new SessionService();
+
   // view engine setup
   app.set('views', path.join(__dirname, 'views'));
   app.set('view engine', 'ejs');
@@ -24,8 +25,14 @@ module.exports = (config) => {
 
   app.use(
     '/bots/slack',
-    slackRouter({ reservationService, config, witService })
+    slackRouter({
+      reservationService,
+      witService,
+      config,
+      sessionService,
+    })
   );
+
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(express.static(path.join(__dirname, 'public')));
@@ -37,6 +44,15 @@ module.exports = (config) => {
     }
     return next();
   });
+
+  // To test the witService, if it works, run localhost 3000 to see the result
+  // app.use(async (req, res, next) => {
+  //   const entities = await witService.query(
+  //     'Hi I am Daniel. I would like to book a table for 2 at 7pm.'
+  //   );
+  //   console.log(entities);
+  //   return next();
+  // });
 
   app.use('/', indexRouter({ reservationService, config }));
 

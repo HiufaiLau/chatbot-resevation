@@ -1,22 +1,24 @@
 const { Wit } = require('node-wit');
 
-class witService { 
-    constructor(accessToken) { 
-        this.client = new Wit({ accessToken });
-    }
+class WitService {
+  constructor(accessToken) {
+    this.client = new Wit({ accessToken });
+  }
 
-    async query(text) { 
-        const queryResult = await this.client.message(text);
+  async query(text) {
+    const queryResult = await this.client.message(text);
 
-        const { entities } = queryResult;
+    const { entities } = queryResult;
 
-        const extractedEntities = {};
+    const extractedEntities = {};
 
-        Object.keys(entities).forEach((key) => {
-            extractedEntities[key] = entities[key][0].value;
-        });
-        return extractedEntities;
-    }
+    Object.keys(entities).forEach((key) => {
+      if (entities[key][0].confidence >= 0.7) {
+        extractedEntities[key] = entities[key][0].value;
+      }
+    });
+    return extractedEntities;
+  }
 }
 
-module.exports = witService;
+module.exports = WitService;
