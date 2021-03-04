@@ -47,7 +47,7 @@ module.exports = (params) => {
     } else {
       const entities = await witService.query(eventText);
       const {
-        intent,
+        // intent,
         customerName,
         reservationDateTime,
         numberOfGuests,
@@ -64,7 +64,8 @@ module.exports = (params) => {
         !entities['wit$contact:customerName'] ||
         !entities['wit$datetime:reservationDateTime'] ||
         !entities['wit$number:numberOfGuests']
-      ) {
+      ) 
+      {
         text = 'Sorry - could you rephrase that?';
         console.log(entities);
       } else {
