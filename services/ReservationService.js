@@ -31,7 +31,7 @@ class ReservationService {
 
   async tryReservation(datetime, numberOfGuests, customerName) {
     const data = (await this.getData()) || [];
-    if (numberOfGuests > 4 || !this.isAvailable(datetime, data)) {
+    if (numberOfGuests > 5 || !this.isAvailable(datetime, data)) {
       return {
         error: 'There are no free tables available at that time.',
       };

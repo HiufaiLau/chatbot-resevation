@@ -53,12 +53,17 @@ module.exports = (params) => {
         numberOfGuests,
       } = entities;
 
+      // if (
+      // !intent ||
+      // intent !== 'reservation' ||
+      // !customerName ||
+      // !reservationDateTime ||
+      //   !numberOfGuests
+      // )
       if (
-        !intent ||
-        intent !== 'reservation' ||
-        !customerName ||
-        !reservationDateTime ||
-        !numberOfGuests
+        !entities['wit$contact:customerName'] ||
+        !entities['wit$datetime:reservationDateTime'] ||
+        !entities['wit$number:numberOfGuests']
       ) {
         text = 'Sorry - could you rephrase that?';
         console.log(entities);

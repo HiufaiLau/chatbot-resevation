@@ -5,8 +5,8 @@ require('dotenv').config();
 module.exports = {
   reservations: {
     datafile: path.join(__dirname, '../data/reservations.json'),
-    reservationDuration: 2,
-    numberOfTables: 6,
+    reservationDuration: 1,
+    numberOfTables: 4,
   },
   slack: {
     signingSecret: process.env.SLACK_SIGNING_SECRET,
