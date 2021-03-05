@@ -6,7 +6,7 @@ module.exports = {
   reservations: {
     datafile: path.join(__dirname, '../data/reservations.json'),
     reservationDuration: 2,
-    numberOfTables: 4,
+    numberOfTables: 100,
   },
   slack: {
     signingSecret: process.env.SLACK_SIGNING_SECRET,

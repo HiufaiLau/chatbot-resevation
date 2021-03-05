@@ -20,12 +20,12 @@ module.exports = (params) => {
     // const sessionId = createSessionId(
     //   event.channel,
     //   event.user,
-    //   event.thread_ts || event.ts
+    //   event.event_ts || event.ts
     // );
 
     // let session = sessionService.get(sessionId);
 
-    // console.log(event);
+    // console.log('session', session);
 
     // if (!session) {
     //   session = sessionService.create(sessionId);
@@ -33,7 +33,7 @@ module.exports = (params) => {
     //   session.context = {
     //     channel: event.channel,
     //     user: event.user,
-    //     thread_ts: event.thread_ts || event.ts,
+    //     event_ts: event.ts,
     //   };
     // }
 
@@ -66,24 +66,24 @@ module.exports = (params) => {
         !entities['wit$contact:customerName']
       ) {
         text = 'Sorry - could you rephrase that?';
-        console.log(entities);
+        console.log('entities1', entities);
       } else {
         const reservationResult = await reservationService.tryReservation(
-          moment(reservationDateTime).unix(),
-          numberOfGuests,
-          customerName
+          moment(entities['wit$datetime:reservationDateTime']).unix(),
+          entities['wit$number:numberOfGuests'],
+          entities['wit$contact:customerName']
         );
         text = reservationResult.success || reservationResult.error;
-        console.log(event);
+        console.log('event', event);
+        console.log('entities', entities);
       }
     }
-
     return slackWebClient.chat.postMessage({
       // text: "HI there, I'm Resi what can I do for you?",
       text,
       channel: event.channel,
-      // channel: event.context.slack.channel,
-      // thread_ts: session.context.slack.thread_ts,
+      // channel: session.context.slack.channel,
+      // event_ts: session.context.slack.event_ts,
       unsername: 'resi',
     });
   }

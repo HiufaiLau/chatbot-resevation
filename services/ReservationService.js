@@ -31,17 +31,18 @@ class ReservationService {
 
   async tryReservation(datetime, numberOfGuests, customerName) {
     const data = (await this.getData()) || [];
-    if (numberOfGuests > 5 || !this.isAvailable(datetime, data)) {
+    if (numberOfGuests > 100 || !this.isAvailable(datetime, data)) {
       console.log(data);
       return {
         error: 'There are no free tables available at that time.',
       };
     }
-    data.unshift({ datetime, numberOfGuests, customerName });
+    data.push({ datetime, numberOfGuests, customerName });
     await writeFile(
       this.datafile,
       JSON.stringify(data.sort((a, b) => b.datetime - a.datetime))
     );
+    console.log('data', data);
     return {
       success: 'The table was successfully reserved!',
     };
