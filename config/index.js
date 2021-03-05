@@ -5,7 +5,7 @@ require('dotenv').config();
 module.exports = {
   reservations: {
     datafile: path.join(__dirname, '../data/reservations.json'),
-    reservationDuration: 1,
+    reservationDuration: 2,
     numberOfTables: 4,
   },
   slack: {

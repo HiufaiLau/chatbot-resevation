@@ -47,38 +47,37 @@ module.exports = (params) => {
     } else {
       const entities = await witService.query(eventText);
       const {
-        // intent,
-        customerName,
+        intent,
         reservationDateTime,
         numberOfGuests,
+        customerName,
       } = entities;
 
       // if (
-      // !intent ||
-      // intent !== 'reservation' ||
-      // !customerName ||
-      // !reservationDateTime ||
+      //   !intent ||
+      //   // intent !== 'reservation' ||
+      //   !customerName ||
+      //   !reservationDateTime ||
       //   !numberOfGuests
-      // )
+      // ) {
       if (
-        !entities['wit$contact:customerName'] ||
         !entities['wit$datetime:reservationDateTime'] ||
-        !entities['wit$number:numberOfGuests']
-      ) 
-      {
+        !entities['wit$number:numberOfGuests'] ||
+        !entities['wit$contact:customerName']
+      ) {
         text = 'Sorry - could you rephrase that?';
         console.log(entities);
       } else {
         const reservationResult = await reservationService.tryReservation(
-          customerName,
           moment(reservationDateTime).unix(),
-          numberOfGuests
+          numberOfGuests,
+          customerName
         );
         text = reservationResult.success || reservationResult.error;
+        console.log(event);
       }
     }
 
-    console.log(event);
     return slackWebClient.chat.postMessage({
       // text: "HI there, I'm Resi what can I do for you?",
       text,

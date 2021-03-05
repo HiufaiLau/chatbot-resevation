@@ -18,16 +18,17 @@ module.exports = (params) => {
 
   router.post('/reservation', async (req, res, next) => {
     try {
-      const {
-        datetime,
-        numberOfGuests,
-        customerName,
-      } = req.body;
+      const { datetime, numberOfGuests, customerName } = req.body;
       // This provides just a minimal sanity check.
       // In real projects make sure to add more input validation.
-      if (!datetime || !numberOfGuests || !customerName) return next(new Error('Insufficient data'));
+      if (!datetime || !numberOfGuests || !customerName)
+        return next(new Error('Insufficient data'));
 
-      const reservationResult = await reservationService.tryReservation(moment(datetime, 'L LT').unix(), numberOfGuests, customerName);
+      const reservationResult = await reservationService.tryReservation(
+        moment(datetime, 'L LT').unix(),
+        numberOfGuests,
+        customerName
+      );
 
       const reservations = await reservationService.getList();
       let formdata = {};
