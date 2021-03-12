@@ -1,10 +1,12 @@
 class SessionService {
   constructor() {
     this.sessions = {};
+    //define global timeout for 5 min
     this.timeout = 60 * 5;
   }
 
-  static now() {
+    static now() {
+      //unix timestamp in seconds
     return Math.floor(new Date() / 1000);
   }
 
