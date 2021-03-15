@@ -52,6 +52,10 @@ module.exports = (params) => {
       console.log('entities', entities);
     }
 
+    if (conversation.exit || conversation.complete) {
+      session.context.conversation = {};
+    }
+
     return slackWebClient.chat.postMessage({
       text,
       channel: session.context.slack.channel,

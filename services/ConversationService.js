@@ -21,6 +21,40 @@ class ConversationService {
     };
 
     if (
+      text === 'Thanks' ||
+      text === 'Bye' ||
+      text === 'thanks' ||
+      text === 'bye' ||
+      text === 'goodbye' ||
+      text === 'Goodbye' ||
+      text === 'thx' ||
+      text === 'Thx' ||
+      text === 'thank you' ||
+      text === 'Thank you'
+    ) {
+      context.conversation.followUp =
+        'Alright. Let me know, when you need another reservation. See you soon.';
+      context.conversation.exit = true;
+      return context;
+    }
+
+    if (
+      text === 'hi' ||
+      text === 'hey' ||
+      text === 'hello' ||
+      text === 'yo' ||
+      text === 'Yo' ||
+      text === 'Hi' ||
+      text === 'Hey' ||
+      text === 'Hello'
+    ) {
+      context.conversation.followUp =
+        'Hello, I am Resi, what could I do for you?';
+      return context;
+    }
+    console.log('context.conversation.entities', context.conversation.entities);
+
+    if (
       !entities['wit$datetime:reservationDateTime'] ||
       !entities['wit$number:numberOfGuests'] ||
       !entities['wit$contact:customerName']
@@ -42,6 +76,11 @@ class ConversationService {
 
     if (!entities['wit$number:numberOfGuests']) {
       conversation.followUp = 'For how many people?';
+      return context;
+    }
+
+    if (entities['wit$number:numberOfGuests'] > 4) {
+      conversation.followUp = 'sorry, the table is maximum for 4 people.';
       return context;
     }
 
