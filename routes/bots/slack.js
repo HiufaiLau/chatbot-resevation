@@ -35,7 +35,6 @@ module.exports = (params) => {
     if (!conversation.complete) {
       text = conversation.followUp;
     } else {
-      // const entities = await witService.query(eventText);
       const {
         intent,
         reservationDateTime,
@@ -43,14 +42,6 @@ module.exports = (params) => {
         customerName,
       } = entities;
 
-      // if (
-      //   !entities['wit$datetime:reservationDateTime'] ||
-      //   !entities['wit$number:numberOfGuests'] ||
-      //   !entities['wit$contact:customerName']
-      // ) {
-      //   text = 'Sorry - could you rephrase that?';
-      //   console.log('entities1', entities);
-      // } else {
       const reservationResult = await reservationService.tryReservation(
         moment(entities['wit$datetime:reservationDateTime']).unix(),
         entities['wit$number:numberOfGuests'],
@@ -59,8 +50,8 @@ module.exports = (params) => {
       text = reservationResult.success || reservationResult.error;
       console.log('event', event);
       console.log('entities', entities);
-      // }
     }
+
     return slackWebClient.chat.postMessage({
       text,
       channel: session.context.slack.channel,
