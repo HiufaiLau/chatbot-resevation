@@ -1,6 +1,6 @@
 const express = require('express');
 
-// Install ask-sdk-core AND ask-sdk-model
+// first install ask-sdk-core AND ask-sdk-model
 const Alexa = require('ask-sdk-core');
 const moment = require('moment');
 
@@ -9,9 +9,7 @@ const ConversationService = require('../../services/ConversationService');
 const router = express.Router();
 
 module.exports = (params) => {
-  const {
-    witService, reservationService, sessionService,
-  } = params;
+  const { witService, reservationService, sessionService } = params;
 
   // This handler is needed by Alexa to launch a conversation
   const sessionStartHandler = {
@@ -30,8 +28,10 @@ module.exports = (params) => {
   // This is a handler needed by Alexa to handle stop phrases coming from the user
   const stopIntentHandler = {
     canHandle(handlerInput) {
-      return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-        && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.StopIntent';
+      return (
+        handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+        handlerInput.requestEnvelope.request.intent.name === 'AMAZON.StopIntent'
+      );
     },
     handle(handlerInput) {
       // Delete the session
@@ -48,7 +48,9 @@ module.exports = (params) => {
   // This handler is called when an Alexa session actually ended
   const sessionEndHandler = {
     canHandle(handlerInput) {
-      return handlerInput.requestEnvelope.request.type === 'SessionEndedRequest';
+      return (
+        handlerInput.requestEnvelope.request.type === 'SessionEndedRequest'
+      );
     },
     handle(handlerInput) {
       // Delete the session
@@ -60,8 +62,10 @@ module.exports = (params) => {
   // This handler is responsible for the reservation logic
   const reservationIntentHandler = {
     canHandle(handlerInput) {
-      return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-        && handlerInput.requestEnvelope.request.intent.name === 'reservation';
+      return (
+        handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
+        handlerInput.requestEnvelope.request.intent.name === 'reservation'
+      );
     },
     async handle(handlerInput) {
       const { sessionId } = handlerInput.requestEnvelope.session;
@@ -69,29 +73,32 @@ module.exports = (params) => {
       if (!session) {
         session = sessionService.create(sessionId);
       }
-      const eventText = handlerInput.requestEnvelope.request.intent.slots.any.value;
+      const eventText =
+        handlerInput.requestEnvelope.request.intent.slots.any.value;
 
-      const context = await ConversationService.run(witService, eventText, session.context);
+      const context = await ConversationService.run(
+        witService,
+        eventText,
+        session.context
+      );
       const { conversation } = context;
       const { entities } = conversation;
       let speechText = '';
       if (!conversation.complete) {
         speechText = conversation.followUp;
       } else {
-        const {
-          customerName,
-          reservationDateTime,
-          numberOfGuests,
-        } = entities;
-        const reservationResult = await reservationService
-          .tryReservation(moment(reservationDateTime).unix(), numberOfGuests, customerName);
+        const { customerName, reservationDateTime, numberOfGuests } = entities;
+        const reservationResult = await reservationService.tryReservation(
+          moment(entities['wit$datetime:reservationDateTime']).unix(),
+          entities['wit$number:numberOfGuests'],
+          entities['wit$contact:customerName']
+        );
         speechText = reservationResult.success || reservationResult.error;
       }
       const response = await handlerInput.responseBuilder
         .speak(speechText)
         .withShouldEndSession(conversation.complete || conversation.exit)
         .getResponse();
-
 
       if (conversation.complete || conversation.exit) {
         // eslint-disable-next-line no-param-reassign
@@ -108,7 +115,7 @@ module.exports = (params) => {
       sessionStartHandler,
       sessionEndHandler,
       reservationIntentHandler,
-      stopIntentHandler,
+      stopIntentHandler
     )
     .create();
 
